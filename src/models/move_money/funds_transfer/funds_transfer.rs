@@ -2,42 +2,31 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct FundsTransferInputDetails {
-    beneficiary_details: String,
     company_code: String,
-    credit_account_number: String,
-    _currency: String,
+    transaction_type: String,
     debit_account_number: String,
+    credit_account_number: String,
     debit_amount: u32,
     payment_details: String,
     transaction_reference: String,
-    transaction_type: String,
+    _currency: String,
+    beneficiary_details: String,
     beneficiary_bank_code: String,
 }
 
 impl FundsTransferInputDetails {
     pub fn new(
-        beneficiary_details: String,
         company_code: String,
-        credit_account_number: String,
-        _currency: String,
+        transaction_type: String,
         debit_account_number: String,
+        credit_account_number: String,
         debit_amount: u32,
         payment_details: String,
         transaction_reference: String,
-        transaction_type: String,
+        _currency: String,
+        beneficiary_details: String,
         beneficiary_bank_code: String,
     ) -> Result<Self, String> {
-        if beneficiary_details.is_empty() || beneficiary_details.replace(" ", "").trim().len() == 0
-        {
-            return Err(String::from("beneficiary details is empty"));
-        }
-        // beneficiary_details has a max length of 32 characters
-        else if beneficiary_details.trim().len() > 0 && beneficiary_details.trim().len() <= 32 {
-            // beneficiary_details is valid
-        } else {
-            return Err(String::from("beneficiary details has invalid length"));
-        }
-
         if company_code.is_empty() || company_code.replace(" ", "").trim().len() == 0 {
             return Err(String::from("company code is empty"));
         }
@@ -46,6 +35,28 @@ impl FundsTransferInputDetails {
             // company_code is valid
         } else {
             return Err(String::from("company code has invalid length"));
+        }
+
+        if transaction_type.is_empty() || transaction_type.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("transaction type is empty"));
+        }
+        // transaction_type has a max length of 32 characters
+        else if transaction_type.trim().len() > 0 && transaction_type.trim().len() <= 32 {
+            // transaction_type is valid
+        } else {
+            return Err(String::from("transaction type has invalid length"));
+        }
+
+        if debit_account_number.is_empty()
+            || debit_account_number.replace(" ", "").trim().len() == 0
+        {
+            return Err(String::from("debit account number is empty"));
+        }
+        // debit_account_number has a max length of 32 characters
+        else if debit_account_number.trim().len() > 0 && debit_account_number.trim().len() <= 32 {
+            // debit_account_number is valid
+        } else {
+            return Err(String::from("debit account number has invalid length"));
         }
 
         if credit_account_number.is_empty()
@@ -59,28 +70,6 @@ impl FundsTransferInputDetails {
             // credit_account_number is valid
         } else {
             return Err(String::from("credit account number has invalid length"));
-        }
-
-        if _currency.is_empty() || _currency.replace(" ", "").trim().len() == 0 {
-            return Err(String::from("currency is empty"));
-        }
-        // currency has a length of 3 characters
-        else if _currency.trim().len() == 3 {
-            // currency is valid
-        } else {
-            return Err(String::from("currency has invalid length"));
-        }
-
-        if debit_account_number.is_empty()
-            || debit_account_number.replace(" ", "").trim().len() == 0
-        {
-            return Err(String::from("debit account number is empty"));
-        }
-        // debit_account_number has a max length of 32 characters
-        else if debit_account_number.trim().len() > 0 && debit_account_number.trim().len() <= 32 {
-            // debit_account_number is valid
-        } else {
-            return Err(String::from("debit account number has invalid length"));
         }
 
         if debit_amount > 0 { // debit_amount is valid
@@ -111,14 +100,25 @@ impl FundsTransferInputDetails {
             return Err(String::from("transaction reference has invalid length"));
         }
 
-        if transaction_type.is_empty() || transaction_type.replace(" ", "").trim().len() == 0 {
-            return Err(String::from("transaction type is empty"));
+        if _currency.is_empty() || _currency.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("currency is empty"));
         }
-        // transaction_type has a max length of 32 characters
-        else if transaction_type.trim().len() > 0 && transaction_type.trim().len() <= 32 {
-            // transaction_type is valid
+        // currency has a length of 3 characters
+        else if _currency.trim().len() == 3 {
+            // currency is valid
         } else {
-            return Err(String::from("transaction type has invalid length"));
+            return Err(String::from("currency has invalid length"));
+        }
+
+        if beneficiary_details.is_empty() || beneficiary_details.replace(" ", "").trim().len() == 0
+        {
+            return Err(String::from("beneficiary details is empty"));
+        }
+        // beneficiary_details has a max length of 32 characters
+        else if beneficiary_details.trim().len() > 0 && beneficiary_details.trim().len() <= 32 {
+            // beneficiary_details is valid
+        } else {
+            return Err(String::from("beneficiary details has invalid length"));
         }
 
         if beneficiary_bank_code.is_empty()
@@ -135,22 +135,17 @@ impl FundsTransferInputDetails {
         }
 
         Ok(Self {
-            beneficiary_details,
             company_code,
-            credit_account_number,
-            _currency,
+            transaction_type,
             debit_account_number,
+            credit_account_number,
             debit_amount,
             payment_details,
             transaction_reference,
-            transaction_type,
+            _currency,
+            beneficiary_details,
             beneficiary_bank_code,
         })
-    }
-
-    pub fn get_beneficiary_details(&self) -> String {
-        let beneficiary_details = &self.beneficiary_details;
-        beneficiary_details.to_string()
     }
 
     pub fn get_company_code(&self) -> String {
@@ -158,19 +153,19 @@ impl FundsTransferInputDetails {
         company_code.to_string()
     }
 
-    pub fn get_credit_account_number(&self) -> String {
-        let credit_account_number = &self.credit_account_number;
-        credit_account_number.to_string()
-    }
-
-    pub fn get_currency(&self) -> String {
-        let _currency = &self._currency;
-        _currency.to_string()
+    pub fn get_transaction_type(&self) -> String {
+        let transaction_type = &self.transaction_type;
+        transaction_type.to_string()
     }
 
     pub fn get_debit_account_number(&self) -> String {
         let debit_account_number = &self.debit_account_number;
         debit_account_number.to_string()
+    }
+
+    pub fn get_credit_account_number(&self) -> String {
+        let credit_account_number = &self.credit_account_number;
+        credit_account_number.to_string()
     }
 
     pub fn get_debit_amount(&self) -> u32 {
@@ -188,9 +183,14 @@ impl FundsTransferInputDetails {
         transaction_reference.to_string()
     }
 
-    pub fn get_transaction_type(&self) -> String {
-        let transaction_type = &self.transaction_type;
-        transaction_type.to_string()
+    pub fn get_currency(&self) -> String {
+        let _currency = &self._currency;
+        _currency.to_string()
+    }
+
+    pub fn get_beneficiary_details(&self) -> String {
+        let beneficiary_details = &self.beneficiary_details;
+        beneficiary_details.to_string()
     }
 
     pub fn get_beneficiary_bank_code(&self) -> String {
@@ -204,15 +204,15 @@ impl FundsTransferInputDetails {
 #[allow(non_snake_case)]
 #[derive(Serialize, Debug)]
 pub struct FundsTransferData {
-    pub beneficiaryDetails: String,
     pub companyCode: String,
-    pub creditAccountNumber: String,
-    pub currency: String,
+    pub transactionType: String,
     pub debitAccountNumber: String,
+    pub creditAccountNumber: String,
     pub debitAmount: u32,
     pub paymentDetails: String,
     pub transactionReference: String,
-    pub transactionType: String,
+    pub currency: String,
+    pub beneficiaryDetails: String,
     pub beneficiaryBankCode: String,
 }
 
@@ -220,12 +220,19 @@ pub struct FundsTransferData {
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub struct AccountFundsTransferResponseData {
+pub struct HeaderResponseData {
+    pub messageID: Option<String>,
     pub statusCode: Option<String>,
     pub statusMessage: Option<String>,
     pub statusDescription: Option<String>,
-    pub merchantID: Option<String>,
     pub retrievalRefNumber: Option<String>,
+    pub merchantID: Option<String>,
+}
+
+#[allow(non_snake_case)]
+#[derive(Deserialize, Debug)]
+pub struct AccountFundsTransferResponseData {
+    pub header: HeaderResponseData,
 }
 
 #[allow(non_snake_case)]

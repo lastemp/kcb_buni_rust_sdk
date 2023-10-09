@@ -18,28 +18,28 @@ pub async fn transfer(
     ),
     String,
 > {
-    let beneficiary_details = account_details.get_beneficiary_details();
     let company_code = account_details.get_company_code();
-    let credit_account_number = account_details.get_credit_account_number();
-    let _currency = account_details.get_currency();
+    let transaction_type = account_details.get_transaction_type();
     let debit_account_number = account_details.get_debit_account_number();
+    let credit_account_number = account_details.get_credit_account_number();
     let debit_amount = account_details.get_debit_amount();
     let payment_details = account_details.get_payment_details();
     let transaction_reference = account_details.get_transaction_reference();
-    let transaction_type = account_details.get_transaction_type();
+    let _currency = account_details.get_currency();
+    let beneficiary_details = account_details.get_beneficiary_details();
     let beneficiary_bank_code = account_details.get_beneficiary_bank_code();
 
     // Lets build the request params as a struct
     let transfer_data = build_account_funds_transfer_data(
-        beneficiary_details,
         company_code,
-        credit_account_number,
-        _currency,
+        transaction_type,
         debit_account_number,
+        credit_account_number,
         debit_amount,
         payment_details,
         transaction_reference,
-        transaction_type,
+        _currency,
+        beneficiary_details,
         beneficiary_bank_code,
     );
 

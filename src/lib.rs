@@ -3,7 +3,16 @@ pub mod models {
         pub mod funds_transfer {
             pub mod funds_transfer;
         }
+        pub mod business_transfer {
+            pub mod b2b {
+                pub mod b2b;
+            }
+            pub mod b2c {
+                pub mod b2c;
+            }
+        }
     }
+
     pub mod authorization {
         pub mod auth_token;
     }
@@ -19,6 +28,14 @@ pub mod move_money {
     pub mod funds_transfer {
         pub mod funds_transfer;
     }
+    pub mod business_transfer {
+        pub mod b2b {
+            pub mod b2b;
+        }
+        pub mod b2c {
+            pub mod b2c;
+        }
+    }
 }
 use base64::{
     alphabet,
@@ -26,8 +43,7 @@ use base64::{
     Engine as _,
 };
 use models::move_money::funds_transfer::funds_transfer::{
-    AccountFundsTransferResponseData, BadRequestErrorResponseData, FundsTransferInputDetails,
-    UnauthorizedErrorResponseData,
+    AccountFundsTransferResponseData, FundsTransferInputDetails, UnauthorizedErrorResponseData,
 };
 
 const AUTHORISATION_BEARER: &str = "Bearer";
@@ -181,10 +197,78 @@ impl KcbBuniGateway {
             }
         }
     }
-}
-/*
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+
+    pub async fn b2b_payments(
+        &self,
+        account_details: models::move_money::business_transfer::b2b::b2b::BusinessTransferInputDetails,
+    ) -> std::result::Result<
+        (
+            Option<models::move_money::business_transfer::b2b::b2b::BusinessTransferResponseData>,
+            Option<models::move_money::business_transfer::b2b::b2b::ErrorResponseData>,
+        ),
+        String,
+    > {
+        let _output = self.get_auth_token();
+
+        let _result = _output.await;
+
+        match _result {
+            Ok(access_token_result) => {
+                // Handle success case
+                let access_token: String = self.parse_auth_token(access_token_result);
+                let api_url = &self.account_transfer_url;
+
+                let _result = move_money::business_transfer::b2b::b2b::transfer(
+                    account_details,
+                    access_token,
+                    api_url.to_string(),
+                )
+                .await;
+
+                return _result;
+            }
+            Err(_err) => {
+                // Handle error case
+                return Err(_err.to_string());
+            }
+        }
+    }
+
+    pub async fn b2c_payments(
+        &self,
+        account_details: models::move_money::business_transfer::b2c::b2c::BusinessTransferInputDetails,
+    ) -> std::result::Result<
+        (
+            Option<models::move_money::business_transfer::b2c::b2c::BusinessTransferResponseData>,
+            Option<models::move_money::business_transfer::b2c::b2c::ErrorResponseData>,
+        ),
+        String,
+    > {
+        let _output = self.get_auth_token();
+
+        let _result = _output.await;
+
+        match _result {
+            Ok(access_token_result) => {
+                // Handle success case
+                let access_token: String = self.parse_auth_token(access_token_result);
+                let api_url = &self.account_transfer_url;
+
+                let _result = move_money::business_transfer::b2c::b2c::transfer(
+                    account_details,
+                    access_token,
+                    api_url.to_string(),
+                )
+                .await;
+
+                return _result;
+            }
+            Err(_err) => {
+                // Handle error case
+                return Err(_err.to_string());
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -192,9 +276,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn test_kcb_buni_gateway() {
+        let consumer_key = String::from("***");
+        let consumer_secret = String::from("***");
+        let _env = String::from("sandbox");
+
+        let _result = KcbBuniGateway::new(consumer_key, consumer_secret, _env);
+        assert_eq!(_result.is_ok(), true);
     }
 }
-*/
