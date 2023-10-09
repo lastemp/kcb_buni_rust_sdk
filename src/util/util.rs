@@ -37,3 +37,16 @@ pub fn build_account_funds_transfer_data(
         beneficiaryBankCode: beneficiary_bank_code,
     }
 }
+
+pub fn build_headers_generate_auth_token(api_key: String) -> HeaderMap {
+    let mut headers = HeaderMap::new();
+
+    headers.insert(
+        CONTENT_TYPE,
+        "application/x-www-form-urlencoded".parse().unwrap(),
+    );
+    headers.insert(ACCEPT, "application/json".parse().unwrap());
+    headers.insert("Authorization", api_key.parse().unwrap());
+
+    headers
+}

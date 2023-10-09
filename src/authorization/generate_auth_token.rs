@@ -1,6 +1,9 @@
 use reqwest::StatusCode;
 
-use crate::{models::models::AuthTokenResponseData, util::util::build_headers_generate_auth_token};
+use crate::{
+    models::authorization::auth_token::AuthTokenResponseData,
+    util::util::build_headers_generate_auth_token,
+};
 
 pub async fn get_auth_token(
     grant_type: String,

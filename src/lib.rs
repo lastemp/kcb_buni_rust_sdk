@@ -4,6 +4,9 @@ pub mod models {
             pub mod funds_transfer;
         }
     }
+    pub mod authorization {
+        pub mod auth_token;
+    }
 }
 mod util {
     pub mod util;
@@ -11,15 +14,7 @@ mod util {
 mod authorization {
     pub mod generate_auth_token;
 }
-/*
-mod enquiry {
-    pub mod account_balance;
-    pub mod account_full_statement;
-    pub mod account_mini_statement;
-    pub mod account_transactions;
-    pub mod account_validation;
-}
-*/
+
 pub mod move_money {
     pub mod funds_transfer {
         pub mod funds_transfer;
@@ -41,10 +36,8 @@ const GRANT_TYPE: &str = "client_credentials";
 const AUTH_TOKEN_URL_SANDBOX: &str = "https://uat.buni.kcbgroup.com/authorize";
 const AUTH_TOKEN_URL_PROD: &str = "https://uat.buni.kcbgroup.com/authorize";
 
-const ACCOUNT_TO_ACCOUNT_TRANSFER_URL_SANDBOX: &str =
-    "https://uat.buni.kcbgroup.com/fundstransfer/1.0.0";
-const ACCOUNT_TO_ACCOUNT_TRANSFER_URL_PROD: &str =
-    "https://uat.buni.kcbgroup.com/fundstransfer/1.0.0";
+const ACCOUNT_TRANSFER_URL_SANDBOX: &str = "https://uat.buni.kcbgroup.com/fundstransfer/1.0.0";
+const ACCOUNT_TRANSFER_URL_PROD: &str = "https://uat.buni.kcbgroup.com/fundstransfer/1.0.0";
 
 #[derive(Debug)]
 pub struct KcbBuniGateway {
@@ -52,7 +45,7 @@ pub struct KcbBuniGateway {
     consumer_key: String,
     consumer_secret: String,
     auth_token_url: String,
-    account_to_account_transfer_url: String,
+    account_transfer_url: String,
 }
 
 impl KcbBuniGateway {
@@ -89,10 +82,10 @@ impl KcbBuniGateway {
             AUTH_TOKEN_URL_SANDBOX.to_string()
         };
 
-        let account_to_account_transfer_url = if _env.eq_ignore_ascii_case(&String::from("prod")) {
-            ACCOUNT_TO_ACCOUNT_TRANSFER_URL_PROD.to_string()
+        let account_transfer_url = if _env.eq_ignore_ascii_case(&String::from("prod")) {
+            ACCOUNT_TRANSFER_URL_PROD.to_string()
         } else {
-            ACCOUNT_TO_ACCOUNT_TRANSFER_URL_SANDBOX.to_string()
+            ACCOUNT_TRANSFER_URL_SANDBOX.to_string()
         };
 
         Ok(Self {
@@ -100,7 +93,7 @@ impl KcbBuniGateway {
             consumer_key,
             consumer_secret,
             auth_token_url,
-            account_to_account_transfer_url,
+            account_transfer_url,
         })
     }
 
@@ -171,7 +164,7 @@ impl KcbBuniGateway {
             Ok(access_token_result) => {
                 // Handle success case
                 let access_token: String = self.parse_auth_token(access_token_result);
-                let api_url = &self.account_to_account_transfer_url;
+                let api_url = &self.account_transfer_url;
 
                 let _result = move_money::funds_transfer::funds_transfer::transfer(
                     account_details,
