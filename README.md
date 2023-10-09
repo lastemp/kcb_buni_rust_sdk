@@ -2,7 +2,7 @@
 
 This is an sdk that will be used by developers to seamlessly integrate with KCB Buni APIs' Gateway.
 KCB Group Limited, also known as the KCB Group, is a financial services holding company based in the African Great Lakes region.
-The API endpoints provided by Jenga API Gateway includes; Send Money, Receive Payments and Account Services (https://buni.kcbgroup.com/). 
+The API endpoints provided by KCB Buni Gateway includes; Send Money, Receive Payments and Account Services (https://buni.kcbgroup.com/). 
 
 The sdk has below listed dependencies:
 - [Serde](https://github.com/serde-rs/serde) for serializing and deserializing Rust data structures
