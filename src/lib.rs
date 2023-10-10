@@ -11,6 +11,16 @@ pub mod models {
                 pub mod b2c;
             }
         }
+        pub mod mobile_money {
+            pub mod mpesa {
+                pub mod mpesa_express;
+            }
+        }
+    }
+
+    pub mod vending_services {
+        pub mod transaction_status;
+        pub mod validate_external_bill;
     }
 
     pub mod authorization {
@@ -36,14 +46,35 @@ pub mod move_money {
             pub mod b2c;
         }
     }
+    pub mod mobile_money {
+        pub mod mpesa {
+            pub mod mpesa_express;
+        }
+    }
+}
+pub mod vending_services {
+    pub mod transaction_status;
+    pub mod validate_external_bill;
 }
 use base64::{
     alphabet,
     engine::{self, general_purpose},
     Engine as _,
 };
-use models::move_money::funds_transfer::funds_transfer::{
-    AccountFundsTransferResponseData, FundsTransferInputDetails, UnauthorizedErrorResponseData,
+use models::{
+    move_money::{
+        funds_transfer::funds_transfer::{
+            AccountFundsTransferResponseData, FundsTransferInputDetails,
+            UnauthorizedErrorResponseData,
+        },
+        mobile_money::mpesa::mpesa_express::{MpesaExpressInputDetails, MpesaExpressResponseData},
+    },
+    vending_services::{
+        transaction_status::{TransactionStatusInputDetails, TransactionStatusResponseData},
+        validate_external_bill::{
+            ValidateExternalBillInputDetails, ValidateExternalBillResponseData,
+        },
+    },
 };
 
 const AUTHORISATION_BEARER: &str = "Bearer";
@@ -255,6 +286,96 @@ impl KcbBuniGateway {
                 let api_url = &self.account_transfer_url;
 
                 let _result = move_money::business_transfer::b2c::b2c::transfer(
+                    account_details,
+                    access_token,
+                    api_url.to_string(),
+                )
+                .await;
+
+                return _result;
+            }
+            Err(_err) => {
+                // Handle error case
+                return Err(_err.to_string());
+            }
+        }
+    }
+
+    pub async fn mpesa_express_stk_push(
+        &self,
+        account_details: MpesaExpressInputDetails,
+    ) -> std::result::Result<MpesaExpressResponseData, String> {
+        let _output = self.get_auth_token();
+
+        let _result = _output.await;
+
+        match _result {
+            Ok(access_token_result) => {
+                // Handle success case
+                let access_token: String = self.parse_auth_token(access_token_result);
+                let api_url = &self.account_transfer_url;
+
+                let _result = move_money::mobile_money::mpesa::mpesa_express::stk_push(
+                    account_details,
+                    access_token,
+                    api_url.to_string(),
+                )
+                .await;
+
+                return _result;
+            }
+            Err(_err) => {
+                // Handle error case
+                return Err(_err.to_string());
+            }
+        }
+    }
+
+    pub async fn validate_external_bill(
+        &self,
+        account_details: ValidateExternalBillInputDetails,
+    ) -> std::result::Result<ValidateExternalBillResponseData, String> {
+        let _output = self.get_auth_token();
+
+        let _result = _output.await;
+
+        match _result {
+            Ok(access_token_result) => {
+                // Handle success case
+                let access_token: String = self.parse_auth_token(access_token_result);
+                let api_url = &self.account_transfer_url;
+
+                let _result = vending_services::validate_external_bill::validate(
+                    account_details,
+                    access_token,
+                    api_url.to_string(),
+                )
+                .await;
+
+                return _result;
+            }
+            Err(_err) => {
+                // Handle error case
+                return Err(_err.to_string());
+            }
+        }
+    }
+
+    pub async fn enquire_transaction_status(
+        &self,
+        account_details: TransactionStatusInputDetails,
+    ) -> std::result::Result<TransactionStatusResponseData, String> {
+        let _output = self.get_auth_token();
+
+        let _result = _output.await;
+
+        match _result {
+            Ok(access_token_result) => {
+                // Handle success case
+                let access_token: String = self.parse_auth_token(access_token_result);
+                let api_url = &self.account_transfer_url;
+
+                let _result = vending_services::transaction_status::enquire(
                     account_details,
                     access_token,
                     api_url.to_string(),

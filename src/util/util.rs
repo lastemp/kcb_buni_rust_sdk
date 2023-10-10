@@ -6,6 +6,9 @@ use crate::models::move_money::business_transfer::business_transfer::{
 };
 */
 use crate::models::move_money::funds_transfer::funds_transfer::FundsTransferData;
+use crate::models::move_money::mobile_money::mpesa::mpesa_express::MpesaExpressData;
+use crate::models::vending_services::transaction_status::{PayloadData, TransactionStatusData};
+use crate::models::vending_services::validate_external_bill::ValidateExternalBillData;
 use reqwest::header::HeaderMap;
 use reqwest::header::{ACCEPT, CONTENT_TYPE};
 
@@ -148,6 +151,48 @@ pub fn build_b2c_business_transfer_data(
         header: _header,
         requestPayload: request_payload,
     }
+}
+
+pub fn build_mpesa_express_data(
+    phone_number: String,
+    _amount: u32,
+    invoice_number: String,
+    shared_short_code: bool,
+    org_short_code: String,
+    org_passkey: String,
+    callback_url: String,
+    transaction_description: String,
+) -> MpesaExpressData {
+    MpesaExpressData {
+        phoneNumber: phone_number,
+        amount: _amount.to_string(),
+        invoiceNumber: invoice_number,
+        sharedShortCode: shared_short_code,
+        orgShortCode: org_short_code,
+        orgPassKey: org_passkey,
+        callbackUrl: callback_url,
+        transactionDescription: transaction_description,
+    }
+}
+
+pub fn build_validate_external_bill_data(
+    request_id: String,
+    customer_reference: String,
+    organization_reference: String,
+) -> ValidateExternalBillData {
+    ValidateExternalBillData {
+        requestId: request_id,
+        customerReference: customer_reference,
+        organizationReference: organization_reference,
+    }
+}
+
+pub fn build_transaction_status_data(originator_request_id: String) -> TransactionStatusData {
+    let _payload = PayloadData {
+        originatorRequestId: originator_request_id,
+    };
+
+    TransactionStatusData { payload: _payload }
 }
 
 pub fn build_headers_generate_auth_token(api_key: String) -> HeaderMap {
